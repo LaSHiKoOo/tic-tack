@@ -1,0 +1,288 @@
+
+
+
+
+
+
+
+const express = require('express');
+const app = express();
+var path = require('path');
+var server = require('http').createServer(app);
+var io = require('socket.io')(server);
+var port = process.env.PORT || 3000;
+
+/* --- ფაილებისთვის --- */
+app.use(express.static(path.join(__dirname, 'files')));
+
+var clients = [];
+var tables = [];
+var clientId = 0;
+var numPlayers = 0;
+var numTables = 0;
+
+/* --- მასივიდან ამოშლა --- */
+
+Array.prototype.remove = function() {
+  var what, a = arguments, L = a.length, ax;
+  while (L && this.length) {
+      what = a[--L];
+      while ((ax = this.indexOf(what)) !== -1) {
+          this.splice(ax, 1);
+      }
+  }
+  return this;
+};
+
+/* --- სერვერის დაკავშირება --- */
+
+
+app.get('/', function (req, res) {
+  res.sendfile(__dirname + '/index.html');
+});
+
+server.listen(port, () => {
+    console.log('Server listening at port %d', port);
+  });
+    
+
+io.sockets.on('connection', (socket) => {
+  var addedUser = false
+  var addedTable = false;
+
+  socket.on('add user', (username) => {
+    if (addedUser) return;
+    
+    var singlePlayer = {
+      userName: "",
+      userID: 0
+    }
+
+    // we store the username in the socket session for this client
+    
+    socket.username = username;
+    singlePlayer.userName = socket.username;
+    singlePlayer.userID = ++clientId;
+    ++numPlayers;    
+    clients.push(singlePlayer);
+    addedUser = true
+
+    socket.broadcast.emit('login', {
+      username: socket.username,
+      numPlayers: numPlayers,
+      clients: clients,
+      numTables: numTables,
+      tables: tables 
+    });
+
+    socket.broadcast.emit('connect', {
+      numPlayers: numPlayers,
+      clients: clients,
+      numTables: numTables,
+      tables: tables 
+    });
+
+    // echo globally (all clients) that a person has connected
+    socket.broadcast.emit('user joined', {
+      username: socket.username,
+      numPlayers: numPlayers,
+      clients: clients,
+      numTables: numTables,
+      tables: tables 
+    });
+    
+  });
+
+  socket.on('create table', (data) => {
+    if (addedTable) return;
+    
+    var singleTable = data;
+
+    ++numTables;    
+    tables.push(singleTable);
+
+    socket.broadcast.emit('create table', {
+      username: socket.username,
+      lastTable: data
+    });
+
+    addedTable = true;
+  });
+
+  socket.broadcast.emit('user joined', {
+      username: socket.username
+  });
+
+  socket.on("join table", function(data){
+    //console.log(data);
+    var i=0;
+    while( data.id != tables[i].id ){
+        i++;
+    }
+    tables[i] = data;
+
+    socket.broadcast.emit("table joined",{
+      tables: tables,
+      currTable: data
+    });
+
+  });
+
+  socket.on('delete table', function(deletedTable){
+    
+    var dltTable = deletedTable;
+
+    for( var i=0; i<tables.length; i++ ){
+      if( deletedTable.id == tables[i].id ){
+        var tempTables = tables.remove(tables[i]);
+        tables = tempTables;
+      }
+    }
+    socket.broadcast.emit("table deleted",{
+      dltTable: dltTable,
+      tables: tables
+    });
+  });
+
+  socket.on('disconnect', () => {
+    if (addedUser) {
+      --numPlayers;
+      clients.remove(socket.username);
+      
+      socket.broadcast.emit('user left', {
+        username: socket.username,
+        numPlayers: numPlayers,
+        clients: clients,
+        numTables: numTables,
+        tables: tables 
+      });
+    }
+  });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+socket.emit('add user', name);
+
+
+socket.on("login",function(data){   
+
+    gameTables = data.tables;
+    lobby.playerList = data.clients;
+
+    console.log("ES");
+        
+    updateTable(data.numPlayers,data.numTables);
+
+    
+});
+
+// socket.on('connect',function(data){
+//     console.log( data );
+// });
+
+socket.on("create table",function(data){
+
+    updateTable(data.numPlayers,data.numTables);
+
+    lobby.tablesList.push(data.lastTable);
+    gameTables.push(data.lastTable);
+
+    drawTables();
+});
+
+socket.on('user joined', (data) => {
+    updateTable(data.numPlayers,data.numTables);
+    drawTables();
+
+});
+
+socket.on('disconnect', (data) => {
+    console.log('DISCONNECT');
+  });
+  
+socket.on('reconnect', () => {
+  if (name) {
+    socket.emit('add user', name);
+  }
+});
+
+socket.on('user left', (data) => {
+    for(var i=0; i<data.tables.length;i++){
+        if(data.username === data.tables[i].tableOwner){
+            socket.emit('delete table', data.tables[i]);
+            break;
+        }
+    }
+    console.log(data.username + ' left');
+    drawTables();
+    console.log(data.tables );
+    updateTable(data.numPlayers,data.numTables);
+});
+
+socket.on("table joined",function(data){
+
+    for(var i=0; i<gameTables.length; i++){
+        if( data.currTable.id == gameTables[i].id ){
+            gameTables[i] = data.currTable;
+        }
+    }
+    if( name == data.currTable.tableOwner){
+        document.getElementById("playerTwo").innerText = data.currTable.playerTwo;
+    }else{
+        gameTables = data.tables;
+        drawTables(); 
+    }
+   
+});
+
+socket.on("table deleted",function(data){
+    var plTwoName = data.dltTable.playerTwo;
+    if( plTwoName == name ){
+        alert("მაგიდა გაუქმდა");
+        displayLobby();
+    }
+    gameTables = data.tables;
+    console.log(gameTables);
+    drawTables();
+});
+
+socket.on('reconnect_error', () => {
+  console.log('attempt to reconnect has failed');
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

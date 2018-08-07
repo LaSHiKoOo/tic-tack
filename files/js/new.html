@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+    /* @import url("//cdn.web-fonts.ge/fonts/bpg-algeti/css/bpg-algeti.min.css"); */
+
+*{
+    margin: 0;
+    padding: 0;
+    /* font-family: "BPG Algeti", sans-serif !important; */
+}
+body{
+    background: #0C785C;
+}
+.gameLobby{
+    margin: 0 auto;
+    display: flex;
+    margin-top: 30px;
+    width: 800px;
+    height: 600px;
+    background: #F2F2F2;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    border-radius: 5px;
+}
+.gameTables{
+    flex: 3;
+}
+.singleGame{
+    display: flex;
+    width: 98%;
+    height: 50px;
+    margin: 5px;
+    border: 1px solid black;
+}
+.gameTH{
+    display: flex;
+    width: 98%;
+    height: 30px;
+    margin: 5px;
+}
+.gameBody{
+    display: flex;
+    width: 98%;
+    margin: 5px;
+}
+.tableID{
+    display: flex;
+    flex: 1;   
+    align-items: center;
+    justify-content: center;
+}
+.tableInfo{
+    display: flex;
+    flex: 2;   
+    align-items: center;
+    justify-content: center;
+}
+.maxScore{
+    display: flex;
+    flex: 1;   
+    align-items: center;
+    justify-content: center; 
+}
+.tableScore{
+    display: flex;
+    flex: 1;   
+    align-items: center;
+    justify-content: center; 
+}
+.startGame{
+    display: flex;
+    flex: 1;   
+    align-items: center;
+    justify-content: center;
+}
+.startGameButton{
+    width: 80px;
+    height: 30px;
+    background: #0C785C;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    text-align: center;
+    line-height: 30px;
+    cursor: pointer;
+}
+.userInfo{
+    display: flex;
+    width: 98%;
+    flex: 1;
+    flex-direction: column;
+    background: rgb(219, 217, 217);
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+.createGame{
+    display: flex;
+    flex: 10;   
+    align-items: center;
+    justify-content: center;
+}
+.createGameButton{
+    width: 125px;
+    height: 50px;
+    background: #0C785C;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+.gameInfo{
+    flex: 1;
+    width: 100%;
+}
+.gameInfo ul{
+    list-style-type: none;
+    display: block;
+}
+.gameInfo ul li{
+    display: block;
+    padding: 4px;
+    font-size: 10pt;
+}
+.gameInfo ul li span{
+    font-size: 13pt;
+    font-weight: bold;
+}
+
+
+/* The Modal (background) */
+.createGameModal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    margin: 0 auto;
+    top: 200px;
+    left: 500px;
+    width: 500px; /* Full width */
+    height: 300px; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+}
+
+/* Modal Content */
+.createGameModal-content {
+    position: relative;
+    background-color: #fefefe;
+    margin: auto;
+    padding: 0;
+    border: 1px solid #888;
+    width: 80%;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+    animation-name: animatetop;
+    animation-duration: 0.4s
+}
+
+/* Add Animation */
+@-webkit-keyframes animatetop {
+    from {top:-300px; opacity:0} 
+    to {top:0; opacity:1}
+}
+
+@keyframes animatetop {
+    from {top:-300px; opacity:0}
+    to {top:0; opacity:1}
+}
+
+/* The Close Button */
+.createGameModal-close {
+    color: white;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.createGameModal-close:hover,
+.createGameModal-close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.createGameModal-header {
+    padding: 20px;
+    background-color: #0C785C;
+    color: white;
+}
+
+.createGameModal-body {
+    padding: 20px;
+}
+
+.createGameModal-footer {
+    padding: 10px;
+    background-color: #0C785C;
+    color: white;
+}
+.startTableButton{
+    padding: 15px;
+    font-weight: bold;
+    color: #0C785C;
+    border: none;
+}
+
+.gameContainer{
+    margin: 0 auto;
+    display: none;
+    flex-direction: column;
+    margin-top: 30px;
+    width: 800px;
+    height: 600px;
+    background: #F2F2F2;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    border-radius: 5px;
+}
+
+.gameInfoBlock{
+    flex: 1;
+    display: flex;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    padding: 20px;
+}
+.tableIdBlock{
+    flex: 1;
+}
+.tablePlayersBlock{
+    flex: 3;
+}
+.gameBlock{
+    flex: 20;
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+.gameContent{
+    display: block;
+    width: 450px;
+    height: 450px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 10px;
+}
+.gameBox{
+    display: inline-block;
+    width: 120px;
+    height: 120px;
+    margin: 13px;
+    background: rgba(0,0,0,0.3);
+    transition: all 0.2s;
+    border-radius: 10px;
+    cursor: pointer;
+    line-height: 120px;    
+    text-align: center;
+    font-size: 100px;
+}
+.gameBox[data-isfree=false]{
+    cursor: not-allowed;
+}
+.gameBox:hover{  
+    border-color: #ffc600;
+    box-shadow: 0 0 10px #ffc600;
+}
+.winnerPos{  
+    border: 1px solid #028e54;
+    box-shadow: 0 0 60px #06da45;
+}
+.loserPos{  
+    border: 1px solid #b11c08;
+    box-shadow: 0 0 60px #b11c08;
+}
+</style>
+</head>
+<body>
+    <div class="gameLobby">
+        <div class="gameTables">
+            <div class="gameTH">
+                <div class="tableID">
+                    <span>ID</span>
+                </div>
+                <div class="tableInfo">
+                    <span>მოთამაშეები</span>
+                </div>
+                <div class="maxScore">
+                    <span>ხელი</span>
+                </div>
+                <div class="tableScore">
+                    <span>ანგარიში</span>
+                </div>
+                <div class="startGame">
+                    <span>თამაში</span>
+                </div>
+            </div>
+            <div class="gameBody">
+                <div class="singleGame">
+                    <div class="tableID">
+                        <span>269</span>
+                    </div>
+                    <div class="tableInfo">
+                        <span id="playerOne">sasa</span>
+                        &nbsp; - &nbsp;
+                        <span id="playerTwo"></span>
+                    </div>
+                    <div class="maxScore">
+                        <span>1</span>
+                    </div>
+                    <div class="tableScore">
+                        <span>0</span>
+                        &nbsp; - &nbsp;
+                        <span>0</span>
+                    </div>
+                    <div class="startGame">
+                        <button class="startGameButton" data-tableid="269">თამაში</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="userInfo">
+            <div class="createGame">
+                <button class="createGameButton">ახალი მაგიდა</button>
+            </div>
+            <div class="gameInfo">
+                <ul>
+                <li>
+                    მომხმარებელი: <span id="playersNum">undefined</span>
+                </li>
+                <li>
+                    მაგიდა: <span id="tablesNum">undefined</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+</html>
